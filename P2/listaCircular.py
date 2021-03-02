@@ -1,6 +1,7 @@
 from graphviz import Digraph
 from dato import dato
 from nodo import nodo
+from listaGrupos import ListaGrupo
 
 class ListaCircular: 
     def __init__(self): 
@@ -24,10 +25,16 @@ class ListaCircular:
         tmp = self.primero
         contador = 1
         while tmp is not None:
-            print('\n'+str(contador) + '. Nombre: ' + str(tmp.nombre)  + ', N: ' + str(tmp.n) + ', M: '+ str(tmp.m))
+            print('\n'+str(contador) + '. ID G: ' + str(tmp.id)  +  '. Nombre: ' + str(tmp.nombre)  + ', N: ' + str(tmp.n) + ', M: '+ str(tmp.m))
             tmp.dato.mostrarD()
             contador += 1
             tmp = tmp.siguiente
+
+    def mostrarI(self):
+        tmp = self.primero
+        while tmp is not None:
+            print('NO. OPCION : ' + str(tmp.id)  +  '. NOMBRE: ' + str(tmp.nombre)  +  ' N: ' + str(tmp.n) +  ' M: ' + str(tmp.m) )            
+            tmp = tmp.siguiente            
             
 
     def getNodo(self, valor):
@@ -88,12 +95,20 @@ class ListaCircular:
             aux = aux.next
             if aux == self.primero: 
                 break
+
+    def getSize(self):
+        tmp = self.primero
+        cont = 0
+        while tmp is not None:
+            cont += 1
+            tmp = tmp.siguiente
+        return cont            
     def getLast(self): 
         return self.last
-    def diagrama(self): 
-        tmp = self.primero
+    def graficar1(self): 
+        tmp = self.primero 
         while tmp is not None:
-            dot = Digraph('G',filename='hello.gv' ) 
+            dot = Digraph('G',filename= tmp.nombre)
             dot.node('A','Matrices')
             dot.node('B',tmp.nombre)
             dot.attr('node', shape='doublecircle')
@@ -102,18 +117,133 @@ class ListaCircular:
             dot.attr('node', shape='circle')
             dot.edges(['AB','BC','BD'])
             for i in range(0,tmp.n): 
-                idD = 0
                 for j in range(0,tmp.m): 
-                    dot.node(str(idD),str(tmp.dato.busquedaPos(i+1,j+1)))
-                    p = "B"
-                    p = p + str(idD)
-                    dot.edges([p])
-                    
-                idD += 1
-
+                    dot.node(str(tmp.dato.rId(i+1,j+1)),str(tmp.dato.busquedaPos(i+1,j+1)))
+            for i in range(0,tmp.m): 
+                p = "B"
+                p = "B"+ str(i)      
+                dot.edges([p])                          
+            for i in range(0,(tmp.n-1)) : 
+                k = i * tmp.m
+                l = k + tmp.m 
+                for j in range (k,l): 
+                    ed = j
+                    union = j+tmp.m
+                    dot.edge(str(j),str(union))
             print(dot.source)
-            tmp = tmp.siguiente
-        
+            dot.view()
+            tmp = tmp.siguiente          
+
+    def diagramaPor(self,valor): 
+        tmp = self.primero 
+        while tmp is not None:
+            if tmp.id == valor: 
+             dot = Digraph('G',filename='hello.gv' )
+             dot.node('A','Matrices')
+             dot.node('B',tmp.nombre)
+             dot.attr('node', shape='doublecircle')
+             dot.node('C', 'N='+str(tmp.n))
+             dot.node('D', 'M='+str(tmp.m))
+             dot.attr('node', shape='circle')
+             dot.edges(['AB','BC','BD'])
+             for i in range(0,tmp.n): 
+                 for j in range(0,tmp.m): 
+                      dot.node(str(tmp.dato.rId(i+1,j+1)),str(tmp.dato.busquedaPos(i+1,j+1)))
+                 p2 = str(i)
+                 p2 = p2 + str(i+tmp.m) 
+                 dot.edges([p2]) 
+
+             for i in range(0,tmp.m): 
+                 p = "B"
+                 p = "B"+ str(i)      
+                 dot.edges([p])                    
+
+             if tmp.n > 2: 
+                 #k = tmp.n 
+                 #l = tmp.n*2
+                 for i in range(0,tmp.n): #0,1,2,3,4
+                      k = i + tmp.n #5,6,7,8,9
+                      l = k + tmp.m #9,10,11,12,13
+                      if k > 9 or l > 9 : 
+                          dot.edge(str(k),str(l))                         
+                      else: 
+                         p3 = str(k)
+                         p3 = p3+ str(l)       
+                         dot.edges([p3])
+             if tmp.n > 3: 
+                 print("tmp.n es mayor que 3")
+                 k = tmp.n * 2 #10
+                 l = k + tmp.m  #14                
+                 for i in range(k,l): #10,11,12,13
+                      k = i + tmp.n #15 ,16,17,18
+                      l = k + tmp.m #19
+                      if k > 9 or l > 9 : 
+                          dot.edge(str(k),str(l))                         
+                      else: 
+                         p3 = str(k)
+                         p3 = p3+ str(l)       
+                         dot.edges([p3])                            
+             if tmp.n > 4: 
+                 print("tmp.n es mayor que 4")
+                 k = tmp.n 
+                 l = k + tmp.m               
+                 for i in range(k,l): 
+                      k = i + tmp.n
+                      l = k + tmp.m
+                      if k > 9 or l > 9 : 
+                          dot.edge(str(k),str(l))                         
+                      else: 
+                         p3 = str(k)
+                         p3 = p3+ str(l)       
+                         dot.edges([p3])   
+             print(dot.source)
+             dot.view()
+            tmp = tmp.siguiente 
+
+    def graficar(self,valor): 
+        tmp = self.primero 
+        while tmp is not None:
+            if tmp.id == valor: 
+             dot = Digraph('G',filename= tmp.nombre)
+             dot.node('A','Matrices')
+             dot.node('B',tmp.nombre)
+             dot.attr('node', shape='doublecircle')
+             dot.node('C', 'N='+str(tmp.n))
+             dot.node('D', 'M='+str(tmp.m))
+             dot.attr('node', shape='circle')
+             dot.edges(['AB','BC','BD'])
+             for i in range(0,tmp.n): 
+                 for j in range(0,tmp.m): 
+                      dot.node(str(tmp.dato.rId(i+1,j+1)),str(tmp.dato.busquedaPos(i+1,j+1)))
+             for i in range(0,tmp.m): 
+                 p = "B"
+                 p = "B"+ str(i)      
+                 dot.edges([p])                          
+             for i in range(0,(tmp.n-1)) : 
+                 k = i * tmp.m
+                 l = k + tmp.m 
+                 for j in range (k,l): 
+                     ed = j
+                     union = j+tmp.m
+                     dot.edge(str(j),str(union))
+             print(dot.source)
+             dot.view()
+            tmp = tmp.siguiente                       
+   
+    def busquedaPatron(self,valor): 
+        tmp = self.primero 
+        while tmp is not None:
+            contador_Grupos= 0
+            grupos = ListaGrupo()
+            for fil in range (1,tmp.n-1): 
+             seCompara = True
+             if grupos.estaVacia(): 
+                 if agrupad(fil+1): 
+                     seCompara = False
+             if seCompara: 
+                 grupos.insertar(contador_Grupos,fil+1)
+            tmp = tmp.siguiente  
+                      
         
 
 

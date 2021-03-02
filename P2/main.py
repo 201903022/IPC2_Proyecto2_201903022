@@ -36,6 +36,7 @@ def menu():
                 m = int(elemen1.attrib['m'] )
                 nombreL = str(elemen1.attrib['nombre'])
                 datos = ListaDato()
+                idDato = 0
                 for sub1 in elemen1: 
                   if ((int(sub1.attrib['x'])-1) > n ) or ((int(sub1.attrib['y'])-1) > m): 
                       print( "Error en la matriz: "+nombreL+  " INCORRECTO TAMAÑO EN X: "+str((sub1.attrib['x'])) + " Y: "+str(sub1.attrib['y']) + " POR LO TANTO NO SERÁ AGREGADO" )
@@ -45,11 +46,12 @@ def menu():
                          patron = 1
                        else: 
                          patron = 0                     
-                       datos.insertar(nombreL,
+                       datos.insertar(idDato,
                               int(sub1.attrib['x']),
                               int(sub1.attrib['y']),
                               int(sub1.text),
-                              patron)                       
+                              patron)  
+                       idDato += 1                     
                        tamaño_correcto = True  
                 data.insertar(id_matriz,
                               elemen1.attrib['nombre'],
@@ -64,8 +66,15 @@ def menu():
        #FIN DE LA OPCION1  
         elif opcion == 3: 
             print("Opción 3: \n")
-            data.diagrama()
+            if data.getSize()>1: 
+              print("Opciones según matriz: ")
+              data.mostrarI()
+              opcionA = int(input("Ingrese la opción de matriz que quiere visualizar: \n >>>"))
+              data.graficar(opcionA)
+            else: 
+             data.graficar1()
 
+             
         elif opcion == 6: 
             Salir = True
         #fin de la opcion6: 

@@ -56,7 +56,7 @@ class ListaDato:
         tmp = self.inicio
         while tmp is not None:
             if tmp.nombreL == nombreL:
-                print('Posición de X: ' +str.lower(tmp.x)+' Posición de Y: ' +str.lower(tmp.y)+' # Patrón: ' +str.lower(tmp.patron))
+                print('ID : ' +str.lower(tmp.nombreL)+'Posición de X: ' +str.lower(tmp.x)+' Posición de Y: ' +str.lower(tmp.y)+' # Patrón: ' +str.lower(tmp.patron))
             tmp = tmp.siguiente
         return None
 
@@ -64,12 +64,20 @@ class ListaDato:
         tmp = self.inicio
         while True:
             if tmp.x == x and tmp.y == y:
-                print("tmp.x : ",tmp.x, " = ", x)
-                print("tmp.y : ",tmp.y, " = ", y)
                 return tmp.dato
             if tmp.siguiente == None:
                 break
             else: 
                 tmp = tmp.siguiente
         return None
+    def rId(self, x, y):
+        tmp = self.inicio
+        while True:
+            if tmp.x == x and tmp.y == y:
+                return tmp.nombreL
+            if tmp.siguiente == None:
+                break
+            else: 
+                tmp = tmp.siguiente
+        return None        
         
