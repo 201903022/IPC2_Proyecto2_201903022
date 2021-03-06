@@ -3,7 +3,6 @@ class ListaDato:
     def __init__(self):
         self.inicio = None
 
-        #insercion
     def insertar(self,nombreL, x, y, datoG,patron):
         nuevo = dato(nombreL, x,y,datoG,patron)
         if self.inicio is None:
@@ -15,6 +14,7 @@ class ListaDato:
             tmp.siguiente = nuevo
 
         #mostrar
+   
     def mostrarD(self):
         tmp = self.inicio
         contador = 1
@@ -24,8 +24,6 @@ class ListaDato:
             contador += 1
             tmp = tmp.siguiente
             
-
-            #tamanio
     def getSize(self):
         tmp = self.inicio
         cont = 0
@@ -35,6 +33,7 @@ class ListaDato:
         return cont
 
         #busqueda y retorno
+    
     def getNodo(self, valor):
         tmp = self.inicio
         while tmp is not None:
@@ -51,7 +50,6 @@ class ListaDato:
             tmp = tmp.siguiente
         return None
     
-
     def mostrarPor(self, nombreL):
         tmp = self.inicio
         while tmp is not None:
@@ -70,6 +68,18 @@ class ListaDato:
             else: 
                 tmp = tmp.siguiente
         return None
+
+    def busquedaPatron(self, x, y):
+        tmp = self.inicio
+        while True:
+            if tmp.x == x and tmp.y == y:
+                return tmp.patron
+            if tmp.siguiente == None:
+                break
+            else: 
+                tmp = tmp.siguiente
+        return None  
+
     def rId(self, x, y):
         tmp = self.inicio
         while True:

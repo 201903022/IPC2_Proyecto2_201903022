@@ -2,11 +2,15 @@ from graphviz import Digraph
 from dato import dato
 from nodo import nodo
 from listaGrupos import ListaGrupo
+from lMatrizR import lMatrizR
+import xml.etree.cElementTree as ET
+from xml.dom import minidom
 
 class ListaCircular: 
     def __init__(self): 
         self.primero = None
         self.last = None 
+    
     def Vacia(self): 
         return self.primero == None
     
@@ -33,10 +37,9 @@ class ListaCircular:
     def mostrarI(self):
         tmp = self.primero
         while tmp is not None:
-            print('NO. OPCION : ' + str(tmp.id)  +  '. NOMBRE: ' + str(tmp.nombre)  +  ' N: ' + str(tmp.n) +  ' M: ' + str(tmp.m) )            
+            print('NO. OPCION : ' + str(tmp.id+1)  +  '. NOMBRE: ' + str(tmp.nombre)  +  ' N: ' + str(tmp.n) +  ' M: ' + str(tmp.m) )            
             tmp = tmp.siguiente            
             
-
     def getNodo(self, valor):
         tmp = self.primero
         while tmp is not None:
@@ -55,7 +58,6 @@ class ListaCircular:
             self.primero = aux
             self.last.next = self.primero
  
-
     def addLast(self,id,nombre,n,m): 
         if self.Vacia(): 
             self.primero = self.last = nodo(id,nombre,n,m)
@@ -88,6 +90,7 @@ class ListaCircular:
               aux = aux.next
           aux.next = self.primero
           self.last = aux
+    
     def Recorrer(self): 
         aux = self.primero
         while aux: 
@@ -103,8 +106,10 @@ class ListaCircular:
             cont += 1
             tmp = tmp.siguiente
         return cont            
+    
     def getLast(self): 
         return self.last
+    
     def graficar1(self): 
         tmp = self.primero 
         while tmp is not None:
@@ -230,20 +235,142 @@ class ListaCircular:
              dot.view()
             tmp = tmp.siguiente                       
    
-    def busquedaPatron(self,valor): 
+    def patrones(self): 
+        tmp = self.primero 
+        #print("Buscando Nodos que no esten vacíos")
+        while tmp is not None:
+            ID_GRUPO= 0
+            gPatrones = ListaGrupo()
+            #print("Primero nodo no vacio")
+            #print("Buscando patrones en en la matriz: ", tmp.nombre)
+            for fil in range (0,tmp.n): 
+             seCompara = True
+             if not gPatrones.estaVacia():
+                 #print("No hay ningun patron por el momento") 
+                 if gPatrones.enGrupo(fil+1): 
+                     #print("Esta fila ya esta")
+                     seCompara = False
+             
+             if seCompara: 
+                gPatrones.insertar(ID_GRUPO,fil+1)
+                for filC in range (fil+1,tmp.n): 
+                    esIgual = True
+                    for col in range (0,tmp.m): 
+                        if not (tmp.dato.busquedaPatron(fil+1,col+1) == tmp.dato.busquedaPatron(filC+1,col+1)): 
+                            esIgual = False
+                    if esIgual: 
+                        gPatrones.insertar(ID_GRUPO,filC+1)
+                ID_GRUPO += 1
+            if gPatrones.estaVacia(): 
+                seAlmacena = True
+                if gPatrones.enGrupo(tmp.n):
+                    seAlmacena = False
+                if seAlmacena: 
+                    gPatrones.insertar(ID_GRUPO,tmp.n) 
+            tmp.grpPatron = gPatrones
+            print("Nombre Matriz: ", tmp.nombre)
+            tmp.grpPatron.mostrarD()
+            tmp = tmp.siguiente  
+    
+    def sumarA(self):
         tmp = self.primero 
         while tmp is not None:
-            contador_Grupos= 0
-            grupos = ListaGrupo()
-            for fil in range (1,tmp.n-1): 
-             seCompara = True
-             if grupos.estaVacia(): 
-                 if agrupad(fil+1): 
-                     seCompara = False
-             if seCompara: 
-                 grupos.insertar(contador_Grupos,fil+1)
-            tmp = tmp.siguiente  
-                      
+            resultante = lMatrizR()
+            id = 0
+            Fil_resultante = (tmp.grpPatron.ultimoN() +1)
+            print("Fila_Resultante",str(Fil_resultante))
+            for fil in range (0,Fil_resultante): 
+             frecuencia = tmp.grpPatron.contarID(fil)
+             print("Frecuencia: ", frecuencia)
+             estaVacia = True
+             if not resultante.estaVacia(): 
+                 estaVacia = False
+             sinIgnorar = frecuencia
+             if frecuencia > 1: 
+                    while sinIgnorar > 0:
+                        print("Mayor que 1") 
+                        if resultante.estaVacia(): 
+                            for i in range (0,tmp.m): 
+                                filaBuscar = tmp.grpPatron.getFila(fil)
+                                resultante.insertar(id,fil+1,i+1,tmp.dato.busquedaPos(filaBuscar,i+1))   
+                            #sinIgnorar -= 1                 
+                        else: 
+                            if sinIgnorar == frecuencia: 
+                                for i in range(0,tmp.m):
+                                    filaBuscar = tmp.grpPatron.getFila(fil)
+                                    resultante.insertar(id,fil+1,i+1,tmp.dato.busquedaPos(filaBuscar,i+1))
+                            # sinIgnorar -= 1
+                            else: 
+                                for i in range(0,tmp.m): 
+                                    ignore = frecuencia - sinIgnorar 
+                                    filaBuscar = tmp.grpPatron.getFilaIgnore(fil,ignore)
+
+                                    vUno = resultante.busquedaPos(fil+1,i+1)
+                                    vDos = tmp.dato.busquedaPos(filaBuscar,i+1)
+                                    total = vUno + vDos
+
+                                    resultante.reload(fil+1,i+1,total)
+                        sinIgnorar -= 1
+
+             else: 
+                 print("Menor que 1, solo guardar")
+                 for i in range(0,tmp.m):
+                       
+                       filaBuscar = tmp.grpPatron.getFila(fil) 
+                       print("Fila Buscar: ",filaBuscar," Col: ",i)
+                       print("Dato: ",tmp.dato.busquedaPos(filaBuscar,(i+1)))
+                       resultante.insertar(id,fil+1,i+1,tmp.dato.busquedaPos(filaBuscar,(i+1)))         
+            tmp.resultante = resultante
+            print("Nombre Matriz: ", tmp.nombre)
+            tmp.resultante.mostrarD()
+            tmp = tmp.siguiente          
+
+ 
+        tmp = self.primero
+        while tmp is not None:
+            tmp = tmp.siguiente
+        return True
+  
+    def write(self,ruta): 
+        tmp = self.primero      
+        data = ET.Element('Matrices Reducidas')        
+        while tmp is not None: 
+            n = str( (tmp.grpPatron.ultimoN() +1))
+            m = str(tmp.m)
+            #doc = ET.Element("Matrices Reducidas")
+            root = ET.Element("Matriz", nombre=tmp.nombre, n=n, m=m)
+            root1 = ET.SubElement(data,"Matriz", nombre=tmp.nombre, n=n, m=m)
+            filas = (tmp.grpPatron.ultimoN() +1)
+            for i in range(0,filas): 
+                for j in range (0,tmp.m):
+                    ET.SubElement(root, "dato", x=str(i+1), y=str(j+1) ).text = str(tmp.resultante.busquedaPos((i+1),(j+1)))
+                    datos = ET.SubElement(root1,"dato", x=str(i+1), y=str(j+1) ).text = str(tmp.resultante.busquedaPos((i+1),(j+1)))
+            for i in range(0,filas):
+                ET.SubElement(root, "frecuencia", g=str(i+1)).text = str(tmp.grpPatron.contarID(i))
+            tmp = tmp.siguiente
+        #mydata = ET.tostring(data)
+        #myFile = open(ruta,"w")
+        #myFile.write(mydata)
+        dati = self.sangriado(data)   
+        arbol = ET.ElementTree(self.sangriado(data))
+        arbol.write(ruta)
+
+    def sangriado(self,elem): 
+     aString = ET.tostring(elem,'utf-8').decode('utf8') 
+     reparsed = minidom.parseString(aString)                          
+     return reparsed.toprettyxml(indent=" ")
+
+    def Rvacia(self): 
+        tmp = self.primero
+        while tmp is not None:                 
+            if tmp.resultante.estaVacia(): 
+                return True
+                break
+            else: 
+                return False
+            tmp = tmp.siguiente
+        
+
         
 
 
