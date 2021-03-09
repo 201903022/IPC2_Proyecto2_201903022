@@ -1,6 +1,7 @@
 
 from listaDato import ListaDato
 from listaGrupos import ListaGrupo
+from lMatrizR import lMatrizR
 class nodo: 
     def __init__(self,id,nombre,n,m): 
         self.id = id
@@ -9,6 +10,7 @@ class nodo:
         self.m = m
         self.dato = ListaDato()
         self.grpPatron = ListaGrupo()
+        self.resultante = lMatrizR()
         self.siguiente =  None
         self.anterior  =  None
 

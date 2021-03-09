@@ -12,7 +12,7 @@ def pedirOpcion ():
   opcion = 0
   while (not correcto):
     try:
-     opcion = int(input( "Menu: \n 1) Cargar Archivo: \n 2)Procesar archivo \n 3) Escribir archivo de salida \n 4) Mostrar datos del estudiante \n 5) Generar gráfica \n 6) Salir \n>>>"))
+     opcion = int(input( " \n >>>>>>>>>>>>  Menu: <<<<<<<<<<<< \n 1) Cargar Archivo: \n 2)Procesar archivo \n 3) Escribir archivo de salida \n 4) Mostrar datos del estudiante \n 5) Generar gráfica \n 6) Salir \n \n Ingrese una opción \n>>>"))
      correcto = True
     except ValueError:
       print('Error, introduce un numero entero')
@@ -26,6 +26,10 @@ def menu():
         #*********************************************************************************************
         #************************OPCION 1 DEL MENU()*********************************************
         if opcion == 1: 
+            print("********NOTA ******** ")
+            print("SI UN VALOR DE X ES MAYOR QUE N, O Y MAYOR QUE M NO SERÁ GUARDADO")
+            ruta = input("Ingrese la ruta del archivo xml a utilizar " + '\n --->')
+            
             #try: 
               #rutal = ""
               #print("")
@@ -35,7 +39,7 @@ def menu():
               #return False
             #except IOError as e: 
               #return False 
-            ruta = input("Ingrese la ruta del archivo xml a utilizar " + '\n --->')
+            
             tree = ET.parse(ruta)
             root = tree.getroot()
             
@@ -78,20 +82,21 @@ def menu():
            print("Buscando patrones iguales")
            data.patrones()
            print("Empieza la suma de patrones: ")
-           data.sumarA()
+           data.sumarA()           
         #***********************************************************************************   
         elif    opcion == 3: 
           ruta = input("Ingrese la ruta exacta: \n >>>")
           try: 
+            
             x = ruta.split(".")
-            if x[1] == "xml": 
-              if data.Rvacia(): 
-                print("No ha seleccionado la opcón 2 por lo tanto no se puede realizar la opción3")
+            if data.Rvacia(): 
+             print("No ha seleccionado la opcón 2 por lo tanto no se puede realizar la opción3")
+            else:
+              if x[1] == "xml":
+                data.write(ruta)
+                print("Se escribió correctamente ")
               else: 
-                data.write(ruta)                
-              print("Se escribió correctamente ")
-            else: 
-              print("Solo direcciones .xml")          
+                print("Solo direcciones .xml")          
           except FileNotFoundError as e: 
             print("Hubo un error en el sistema")
           except IOError as e: 
@@ -99,7 +104,11 @@ def menu():
           
           
         elif opcion == 4: 
-          print("")
+          print("Jonathán Alexander Sánchez Barrios")
+          print(" 201903022")
+          print("Introducción a la Programación 2 seccón D")
+          print("Ingeniería en Ciencias y Sistemas")
+          print("Primer Semestre 2021")
 
         elif opcion == 5: 
             print("Opción 3: \n")

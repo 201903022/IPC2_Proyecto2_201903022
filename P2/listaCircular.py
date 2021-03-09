@@ -333,27 +333,29 @@ class ListaCircular:
   
     def write(self,ruta): 
         tmp = self.primero      
-        data = ET.Element('Matrices Reducidas')        
+        data = ET.Element('Matrices_Reducidas')                
         while tmp is not None: 
             n = str( (tmp.grpPatron.ultimoN() +1))
             m = str(tmp.m)
             #doc = ET.Element("Matrices Reducidas")
             root = ET.Element("Matriz", nombre=tmp.nombre, n=n, m=m)
-            root1 = ET.SubElement(data,"Matriz", nombre=tmp.nombre, n=n, m=m)
             filas = (tmp.grpPatron.ultimoN() +1)
+            Sfilas = str(filas)
+            root1 = ET.SubElement(data,"Matriz", nombre=tmp.nombre, n=n, m=m,g=Sfilas)
             for i in range(0,filas): 
                 for j in range (0,tmp.m):
                     ET.SubElement(root, "dato", x=str(i+1), y=str(j+1) ).text = str(tmp.resultante.busquedaPos((i+1),(j+1)))
-                    datos = ET.SubElement(root1,"dato", x=str(i+1), y=str(j+1) ).text = str(tmp.resultante.busquedaPos((i+1),(j+1)))
+                    ET.SubElement(root1,"dato", x=str(i+1), y=str(j+1) ).text = str(tmp.resultante.busquedaPos((i+1),(j+1)))
             for i in range(0,filas):
-                ET.SubElement(root, "frecuencia", g=str(i+1)).text = str(tmp.grpPatron.contarID(i))
+                ET.SubElement(root1, "frecuencia", g=str(i+1)).text = str(tmp.grpPatron.contarID(i))
             tmp = tmp.siguiente
-        #mydata = ET.tostring(data)
-        #myFile = open(ruta,"w")
-        #myFile.write(mydata)
-        dati = self.sangriado(data)   
-        arbol = ET.ElementTree(self.sangriado(data))
-        arbol.write(ruta)
+        #arbol = ET.ElementTree(self.sangriado(data))
+        myData = self.sangriado(data)
+        myFile = open(ruta,'w')
+        myFile.write(myData)
+        myFile.close()
+
+        #arbol.write(ruta,'w')
 
     def sangriado(self,elem): 
      aString = ET.tostring(elem,'utf-8').decode('utf8') 
